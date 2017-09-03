@@ -107,6 +107,8 @@ public class MainActivity extends AppCompatActivity implements TicTacToeInterfac
         resetTilesMap();
         ticTacToe.resetGameBoard();
         setScoreBoard();
+        //reset index to start with zero
+        this.current_index = 0;
         //always starts with human as first player
         this.player_mode = Constants.HUMAN;
         showGameBoard();

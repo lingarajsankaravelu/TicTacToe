@@ -553,8 +553,8 @@ public class TicTacToe  {
         vertical_map.put("21",new ArrayList<String>(Arrays.asList("01","11","21")));
         //vertical map for column 2
         vertical_map.put("02",new ArrayList<String>(Arrays.asList("02","12","22")));
-        vertical_map.put("12",new ArrayList<String>(Arrays.asList("01","11","21")));
-        vertical_map.put("21",new ArrayList<String>(Arrays.asList("01","11","21")));
+        vertical_map.put("12",new ArrayList<String>(Arrays.asList("02","12","22")));
+        vertical_map.put("22",new ArrayList<String>(Arrays.asList("02","12","22")));
         Log.d(TAG,"Vertical Map set");
     }
 
