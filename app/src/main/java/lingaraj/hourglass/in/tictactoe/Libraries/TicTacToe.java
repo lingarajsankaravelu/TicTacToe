@@ -346,10 +346,25 @@ public class TicTacToe  {
              return diagonal_move_choice.getBoardKey();
          }
          else {
-             return NO_RESULT;
+
+             return generateRandomMove();
          }
 
     }
+
+    private String generateRandomMove() {
+        List<String> un_occupied_place = new ArrayList<String>();
+        for (int row = 0; row <3 ; row++) {
+            for (int column=0;column<3;column++){
+            if (game_board[row][column]==Constants.INDEX_UNOCCUPIED){
+                String key = String.valueOf(row)+String.valueOf(column);
+                un_occupied_place.add(key);
+            }
+            }
+        }
+            Collections.shuffle(un_occupied_place);
+            return un_occupied_place.get(0);
+     }
 
     private MachineMoveChoice isBlockStrategyNecessaryDiagonal(String human_move_key) {
 
