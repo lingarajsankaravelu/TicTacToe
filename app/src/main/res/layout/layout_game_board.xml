@@ -1,0 +1,279 @@
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<LinearLayout
+    android:background="@color/Color16"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+
+
+    <LinearLayout
+        android:id="@+id/game_board_layout"
+        android:layout_centerInParent="true"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    <LinearLayout
+        android:layout_margin="4dp"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.v7.widget.CardView
+            style="@style/GameBoardCardStyle">
+
+            <ImageView
+                style="@style/GameBoardImageStyle"
+                android:id="@+id/zero_zero"
+                android:onClick="gameBoardTilesClick"
+
+                android:background="@mipmap/ic_default_marker" />
+
+
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            style="@style/GameBoardCardStyle">
+
+            <ImageView
+                android:id="@+id/zero_one"
+                style="@style/GameBoardImageStyle"
+                android:onClick="gameBoardTilesClick"
+
+                android:background="@mipmap/ic_default_marker"
+                />
+
+
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            style="@style/GameBoardCardStyle">
+
+        <ImageView
+            android:id="@+id/zero_two"
+            style="@style/GameBoardImageStyle"
+            android:onClick="gameBoardTilesClick"
+
+            android:background="@mipmap/ic_default_marker"
+
+            />
+        </android.support.v7.widget.CardView>
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_margin="4dp"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.v7.widget.CardView
+            style="@style/GameBoardCardStyle">
+
+            <ImageView
+                style="@style/GameBoardImageStyle"
+                android:id="@+id/one_zero"
+                android:onClick="gameBoardTilesClick"
+                android:background="@mipmap/ic_default_marker" />
+
+
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            style="@style/GameBoardCardStyle">
+
+            <ImageView
+                android:id="@+id/one_one"
+                android:onClick="gameBoardTilesClick"
+                style="@style/GameBoardImageStyle"
+                android:background="@mipmap/ic_default_marker"
+                />
+
+
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            style="@style/GameBoardCardStyle">
+
+            <ImageView
+                android:id="@+id/one_two"
+                android:onClick="gameBoardTilesClick"
+                style="@style/GameBoardImageStyle"
+                android:background="@mipmap/ic_default_marker"
+
+                />
+        </android.support.v7.widget.CardView>
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_margin="4dp"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.v7.widget.CardView
+            style="@style/GameBoardCardStyle">
+
+            <ImageView
+                style="@style/GameBoardImageStyle"
+                android:onClick="gameBoardTilesClick"
+                android:id="@+id/two_zero"
+                android:background="@mipmap/ic_default_marker" />
+
+
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            style="@style/GameBoardCardStyle">
+
+            <ImageView
+                android:id="@+id/two_one"
+                android:onClick="gameBoardTilesClick"
+
+                style="@style/GameBoardImageStyle"
+                android:background="@mipmap/ic_default_marker"
+                />
+
+
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            style="@style/GameBoardCardStyle">
+
+            <ImageView
+                android:id="@+id/two_two"
+                android:onClick="gameBoardTilesClick"
+
+                style="@style/GameBoardImageStyle"
+                android:background="@mipmap/ic_default_marker"
+
+                />
+        </android.support.v7.widget.CardView>
+
+
+    </LinearLayout>
+    </LinearLayout>
+
+
+
+    <TextView
+        android:padding="4dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/game_board_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/computer_turn"
+        android:id="@+id/game_status"
+        android:layout_margin="16dp"
+        android:layout_gravity="center_horizontal"
+        android:textSize="16sp"
+        android:textColor="@android:color/white"
+        />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_margin="4dp"
+            android:orientation="vertical"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_margin="2dp"
+                android:layout_gravity="center_horizontal"
+                android:textColor="@android:color/white"
+                android:text="@string/heading_player"
+                android:textStyle="bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                />
+            <TextView
+                android:layout_margin="2dp"
+                android:layout_gravity="center_horizontal"
+                android:textColor="@android:color/white"
+                android:id="@+id/player_score_view"
+                android:text="@string/score_zero"
+                android:textStyle="bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_margin="4dp"
+            android:orientation="vertical"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_margin="2dp"
+                android:layout_gravity="center_horizontal"
+                android:textColor="@android:color/white"
+                android:text="@string/heading_tie"
+                android:textStyle="bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                />
+            <TextView
+                android:layout_margin="2dp"
+                android:layout_gravity="center_horizontal"
+                android:textColor="@android:color/white"
+                android:id="@+id/tie_count_view"
+                android:text="@string/score_zero"
+                android:textStyle="bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_margin="4dp"
+            android:orientation="vertical"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_margin="2dp"
+                android:layout_gravity="center_horizontal"
+                android:textColor="@android:color/white"
+                android:text="@string/heading_machine"
+                android:textStyle="bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                />
+            <TextView
+                android:layout_margin="2dp"
+                android:layout_gravity="center_horizontal"
+                android:textColor="@android:color/white"
+                android:text="@string/score_zero"
+                android:id="@+id/computer_score_count"
+                android:textStyle="bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+</LinearLayout>
+</layout>

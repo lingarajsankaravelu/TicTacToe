@@ -1,0 +1,29 @@
+<layout  xmlns:android="http://schemas.android.com/apk/res/android">
+    <LinearLayout
+    android:gravity="center_vertical"
+    android:background="@color/Color16"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:clickable="true"
+        android:layout_gravity="center"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:onClick="tryAgain"
+        android:src="@drawable/play_arrow"
+        android:scaleType="fitXY" />
+
+    <TextView
+        android:layout_margin="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/white"
+        android:text="Continue Playing"
+        android:layout_gravity="center_horizontal"
+        />
+
+
+</LinearLayout>
+</layout>

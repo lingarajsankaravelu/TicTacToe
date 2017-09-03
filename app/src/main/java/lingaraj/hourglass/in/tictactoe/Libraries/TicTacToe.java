@@ -1,5 +1,6 @@
 package lingaraj.hourglass.in.tictactoe.Libraries;
 
+import android.content.Context;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -11,6 +12,7 @@ import java.util.Map;
 
 import lingaraj.hourglass.in.tictactoe.Constants;
 import lingaraj.hourglass.in.tictactoe.Models.MachineMoveChoice;
+import lingaraj.hourglass.in.tictactoe.TicTacToeInterface;
 
 /**
  * Created by lingaraj on 9/1/17.
@@ -40,9 +42,12 @@ public class TicTacToe  {
     final String USE_HORIZONTAL_MOVE_CHOICE = "USEHORIZONTALMOVECHOICE";
     final String USE_DIAGONAL_MOVE_CHOICE = "USEDIAGONALMOVECHOICE";
     final String NO_RESULT = "NORESULT";
-
-    public TicTacToe(){
+    private Context mcontext;
+    private TicTacToeInterface activity_interface;
+    public TicTacToe(Context context){
         //Initializing Empty Constructor
+        this.mcontext = context;
+        this.activity_interface = (TicTacToeInterface) mcontext;
         setAxisMap();
         resetGameBoard();
     }
@@ -84,6 +89,7 @@ public class TicTacToe  {
 
         }
         checkPlayerWinSituation(row,column,player);
+        activity_interface.nextPlayerMove(player);
     }
 
     private void checkPlayerWinSituation(int row, int column, int player) {
@@ -212,16 +218,21 @@ public class TicTacToe  {
 
 
 
-    private void updateScoreMap(String score_key, int player) {
+    private void  updateScoreMap(String score_key, int player) {
         //make sure the current score key is already verified and given score.
         if (!this.scoreKeyList.contains(score_key)){
             this.scoreKeyList.add(score_key);
             if (player==Constants.COMPUTER){
                 increementComputerScore();
+                boolean is_tie = false;
+                this.activity_interface.endGame(is_tie,score_key,player);
+
                 //todo communicated with UI display Animation for success and change score
             }
             else {
                 increementPlayerScore();
+                boolean is_tie = false;
+                this.activity_interface.endGame(is_tie,score_key,player);
                 //todo communicated with UI display Animation for success and change score
             }
         }
@@ -247,33 +258,36 @@ public class TicTacToe  {
     }
 
 
-    public void increementPlayerScore(){
+    private void increementPlayerScore(){
         this.player_score++;
         Log.d(TAG,"Player score:"+computer_score);
 
     }
 
-    public void increementComputerScore(){
+    private void increementComputerScore(){
         this.computer_score++;
         Log.d(TAG,"Computer score:"+computer_score);
     }
 
-    private void setMachineMove(){
+    public void increementTieScore(){
+        this.tie_score++;
+        Log.d(TAG,"Tie score increemented");
+    }
+
+    public String generateMachineMove(){
         //starts with the defence move ocuppying the center index(11) will block
         if (!isCenterMatrixIndexOcuppied){
-            addPlayerMove(1,1,Constants.COMPUTER);
+            return "11";
         }
         else {
             String chosen_key = generateComputerNextMove();
             Log.d(TAG,"Computer Generated Next Move:"+chosen_key);
-            if (!chosen_key.equals(NO_RESULT)){
+        /*    if (!chosen_key.equals(NO_RESULT)){
                 int row = Integer.parseInt(String.valueOf(chosen_key.charAt(0)));
                 int column = Integer.parseInt(String.valueOf(chosen_key.charAt(1)));
-                addPlayerMove(row,column,Constants.COMPUTER);
-            }
-            else {
-                Log.d(TAG,"Goto 100th floor in a building, Start cursing the programmer in a false language");
-            }
+                addPlayerMove(row,column,Constants.COMPUTER); */
+                return  chosen_key;
+
         }
 
 
