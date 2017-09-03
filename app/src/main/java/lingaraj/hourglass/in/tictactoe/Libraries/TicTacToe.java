@@ -1,15 +1,16 @@
 package lingaraj.hourglass.in.tictactoe.Libraries;
 
-import android.content.Context;
 import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import lingaraj.hourglass.in.tictactoe.Constants;
+import lingaraj.hourglass.in.tictactoe.Models.MachineMoveChoice;
 
 /**
  * Created by lingaraj on 9/1/17.
@@ -23,6 +24,10 @@ public class TicTacToe  {
     int[][] game_board = new int[3][3];
     private int player_score;
     private int computer_score;
+    private int tie_score;
+    private int last_move_player_row;
+    private int last_move_player_column;
+    private boolean isCenterMatrixIndexOcuppied;
     private Map<String,List<String>> horizontal_map = new HashMap<>();
     private Map<String,List<String>> vertical_map = new HashMap<>();
     private Map<String,List<String>> diagonal_map = new HashMap<>();
@@ -30,6 +35,12 @@ public class TicTacToe  {
     final String VERTICAL_MODE = "vertical";
     final String HORIZONTAL_MODE = "horizontal";
     final String DIAGONAL_MODE = "diagonal";
+    final String NOT_NECESSARY = "notnecessary";
+    final String USE_VERTICAL_MOVE_CHOICE = "USEVERTICALMOVECHOICE";
+    final String USE_HORIZONTAL_MOVE_CHOICE = "USEHORIZONTALMOVECHOICE";
+    final String USE_DIAGONAL_MOVE_CHOICE = "USEDIAGONALMOVECHOICE";
+    final String NO_RESULT = "NORESULT";
+
     public TicTacToe(){
         //Initializing Empty Constructor
         setAxisMap();
@@ -37,6 +48,9 @@ public class TicTacToe  {
     }
 
     private void setAxisMap() {
+        player_score = 0;
+        computer_score = 0;
+        tie_score = 0;
         setHorizontalMap();
         setVerticalMap();
         setDiagonalMap();
@@ -45,8 +59,7 @@ public class TicTacToe  {
 
     public void resetGameBoard() {
         //method can be used to reset gameboard and player score
-        player_score = 0;
-        computer_score = 0;
+        this.isCenterMatrixIndexOcuppied = false;
         this.scoreKeyList.clear();
         for (int row = 0; row < 3; row++) {
             for (int column = 0; column < 3; column++) {
@@ -77,6 +90,15 @@ public class TicTacToe  {
         // Splitted as a three step check because, if check got succeed in vertical mode, horizontal and diagonal execution will be excluded
 
         //1.check for score in vertical mode if returned a false
+        if (player ==Constants.HUMAN){
+            last_move_player_row = row;
+            last_move_player_column = column;
+        }
+
+        if (game_board[1][1]!=-1 && !isCenterMatrixIndexOcuppied) {
+            isCenterMatrixIndexOcuppied = true;
+        }
+
         boolean is_match_vertical_mode = verifyVerticalHorizontalMatch(row,column,player,VERTICAL_MODE);
         if (!is_match_vertical_mode){
             //2. vertical verificatin failed, doing horizontal mode
@@ -220,6 +242,11 @@ public class TicTacToe  {
         return computer_score;
     }
 
+    public int getTie_score() {
+        return tie_score;
+    }
+
+
     public void increementPlayerScore(){
         this.player_score++;
         Log.d(TAG,"Player score:"+computer_score);
@@ -229,6 +256,263 @@ public class TicTacToe  {
     public void increementComputerScore(){
         this.computer_score++;
         Log.d(TAG,"Computer score:"+computer_score);
+    }
+
+    private void setMachineMove(){
+        //starts with the defence move ocuppying the center index(11) will block
+        if (!isCenterMatrixIndexOcuppied){
+            addPlayerMove(1,1,Constants.COMPUTER);
+        }
+        else {
+            String chosen_key = generateComputerNextMove();
+            Log.d(TAG,"Computer Generated Next Move:"+chosen_key);
+            if (!chosen_key.equals(NO_RESULT)){
+                int row = Integer.parseInt(String.valueOf(chosen_key.charAt(0)));
+                int column = Integer.parseInt(String.valueOf(chosen_key.charAt(1)));
+                addPlayerMove(row,column,Constants.COMPUTER);
+            }
+            else {
+                Log.d(TAG,"Goto 100th floor in a building, Start cursing the programmer in a false language");
+            }
+        }
+
+
+    }
+
+    private String generateComputerNextMove() {
+        String human_move_key = String.valueOf(last_move_player_row)+String.valueOf(last_move_player_column);
+        MachineMoveChoice vertical_move_choice = null;
+        MachineMoveChoice horizontal_move_choice = null;
+        MachineMoveChoice diagonal_move_choice = null;
+        if (vertical_map.containsKey(human_move_key)){
+            vertical_move_choice = isBlockStrategyNecessaryVertical(human_move_key,VERTICAL_MODE);
+        }
+        else {
+            vertical_move_choice = new MachineMoveChoice(true);
+        }
+        if (horizontal_map.containsKey(human_move_key)){
+            horizontal_move_choice = isBlockStrategyNecessaryVertical(human_move_key,HORIZONTAL_MODE);
+        }
+        else {
+            horizontal_move_choice = new MachineMoveChoice(true);
+        }
+        if (diagonal_map.containsKey(human_move_key)){
+            diagonal_move_choice = isBlockStrategyNecessaryDiagonal(human_move_key);
+        }
+        else {
+            diagonal_move_choice = new MachineMoveChoice(true);
+        }
+
+
+         if (!vertical_move_choice.isNull() && vertical_move_choice.isRedAlert()){
+             return vertical_move_choice.getBoardKey();
+         }
+         else if (!horizontal_move_choice.isNull() && horizontal_move_choice.isRedAlert()){
+             return horizontal_move_choice.getBoardKey();
+         }
+         else if (!diagonal_move_choice.isNull() && diagonal_move_choice.isRedAlert()){
+             return diagonal_move_choice.getBoardKey();
+         }
+         else if (!vertical_move_choice.isNull() && vertical_move_choice.isScore()){
+             return vertical_move_choice.getBoardKey();
+         }
+         else if (!horizontal_move_choice.isNull() && horizontal_move_choice.isScore()){
+             return horizontal_move_choice.getBoardKey();
+         }
+         else if (!diagonal_move_choice.isNull() && diagonal_move_choice.isScore()){
+             return diagonal_move_choice.getBoardKey();
+         }
+         else if (!vertical_move_choice.isNull() && !diagonal_move_choice.isRedAlert()){
+             return vertical_move_choice.getBoardKey();
+         }
+         else if (!horizontal_move_choice.isNull() && !horizontal_move_choice.isRedAlert()){
+             return horizontal_move_choice.getBoardKey();
+         }
+         else if (!diagonal_move_choice.isNull() && !diagonal_move_choice.isRedAlert()){
+             return diagonal_move_choice.getBoardKey();
+         }
+         else {
+             return NO_RESULT;
+         }
+
+    }
+
+    private MachineMoveChoice isBlockStrategyNecessaryDiagonal(String human_move_key) {
+
+        if (isCenterMatrixIndexOcuppied && game_board[1][1]==Constants.HUMAN){
+            return isDiagonalBlockStrategy(human_move_key);
+        }
+        else if (isCenterMatrixIndexOcuppied && game_board[1][1]==Constants.COMPUTER){
+            return isDiagonalBlockStrategy(human_move_key);
+        }
+        else {
+            return getMachineOccupiablePosition(this.diagonal_map.get(human_move_key));
+        }
+
+    }
+
+    private MachineMoveChoice isDiagonalBlockStrategy(String human_move_key) {
+        if (human_move_key.equals("11")){
+            //diagonal can be on both side have to check
+            List<String> matrixIndexes = new ArrayList<String>();
+            matrixIndexes = this.diagonal_map.get("11");
+            List<String> diagonal_one = matrixIndexes.subList(0,3);
+            List<String> diagonal_two = matrixIndexes.subList(3,6);
+            MachineMoveChoice machine_diagonal_one = verifyDiagonalMatch(diagonal_one);
+            MachineMoveChoice machine_daigonal_two = verifyDiagonalMatch(diagonal_two);
+            if (machine_diagonal_one.isRedAlert()){
+                return machine_diagonal_one;
+            }
+            else if (machine_daigonal_two.isRedAlert()){
+                return machine_daigonal_two;
+            }
+            else {
+                return machine_diagonal_one;
+            }
+        }
+        else {
+            List<String> matrixIndexes = this.diagonal_map.get(human_move_key);
+            return verifyDiagonalMatch(matrixIndexes);
+        }
+    }
+
+    private MachineMoveChoice verifyDiagonalMatch(List<String> matrixIndexes) {
+        int tic = game_board[Integer.parseInt(String.valueOf(matrixIndexes.get(0).charAt(0)))][Integer.parseInt(String.valueOf(matrixIndexes.get(0).charAt(1)))];
+        int tac = game_board[Integer.parseInt(String.valueOf(matrixIndexes.get(1).charAt(0)))][Integer.parseInt(String.valueOf(matrixIndexes.get(1).charAt(1)))];
+        int toe = game_board[Integer.parseInt(String.valueOf(matrixIndexes.get(2).charAt(0)))][Integer.parseInt(String.valueOf(matrixIndexes.get(2).charAt(1)))];
+        if (tic == Constants.HUMAN && tac == Constants.HUMAN && toe == Constants.INDEX_UNOCCUPIED){
+            Log.d(TAG,"Requires Diagonal Block At:"+matrixIndexes.get(0));
+            return new MachineMoveChoice(true,matrixIndexes.get(2),false);
+        }
+       else if (tic == Constants.COMPUTER && tac == Constants.COMPUTER && toe == Constants.INDEX_UNOCCUPIED){
+            Log.d(TAG,"Requires Diagonal Block At:"+matrixIndexes.get(0));
+            MachineMoveChoice record =  new MachineMoveChoice(false,matrixIndexes.get(2),false);
+            record.setScore(true);
+            return record;
+        }
+
+        else if (tic==Constants.HUMAN && tac==Constants.INDEX_UNOCCUPIED && toe==Constants.HUMAN){
+            Log.d(TAG,"Requires Diagonal Block At:"+matrixIndexes.get(1));
+            return new MachineMoveChoice(true,matrixIndexes.get(1),false);
+        }
+        else if (tic==Constants.COMPUTER && tac==Constants.INDEX_UNOCCUPIED && toe==Constants.COMPUTER){
+            Log.d(TAG,"Requires Diagonal Block At:"+matrixIndexes.get(1));
+            MachineMoveChoice record =  new MachineMoveChoice(false,matrixIndexes.get(1),false);
+            record.setScore(true);
+            return record;
+        }
+
+        else if (tic==Constants.INDEX_UNOCCUPIED && tac==Constants.HUMAN && toe==Constants.HUMAN){
+            Log.d(TAG,"Requires Diagonal Block At:"+matrixIndexes.get(0));
+            return new MachineMoveChoice(true,matrixIndexes.get(0),false);
+        }
+        else if (tic==Constants.INDEX_UNOCCUPIED && tac==Constants.COMPUTER && toe==Constants.COMPUTER){
+            Log.d(TAG,"Requires Diagonal Block At:"+matrixIndexes.get(0));
+            MachineMoveChoice record = new MachineMoveChoice(false,matrixIndexes.get(0),false);
+            record.setScore(true);
+            return record;
+
+        }
+        else {
+            return getMachineOccupiablePosition(matrixIndexes);
+        }
+    }
+
+    private MachineMoveChoice isBlockStrategyNecessaryVertical(String human_move_key,String mode) {
+        List<String> matrixIndexes = new ArrayList<String>();
+        if (mode.equals(VERTICAL_MODE)){
+            matrixIndexes =  this.vertical_map.get(human_move_key);
+        }
+        else {
+            matrixIndexes = this.horizontal_map.get(human_move_key);
+        }
+        int tic = game_board[Integer.parseInt(String.valueOf(matrixIndexes.get(0).charAt(0)))][Integer.parseInt(String.valueOf(matrixIndexes.get(0).charAt(1)))];
+        int tac = game_board[Integer.parseInt(String.valueOf(matrixIndexes.get(1).charAt(0)))][Integer.parseInt(String.valueOf(matrixIndexes.get(1).charAt(1)))];
+        int toe = game_board[Integer.parseInt(String.valueOf(matrixIndexes.get(2).charAt(0)))][Integer.parseInt(String.valueOf(matrixIndexes.get(2).charAt(1)))];
+        if (tic == Constants.INDEX_UNOCCUPIED  && tac == Constants.HUMAN && toe == Constants.HUMAN){
+             Log.d(TAG,"Requires Vertical Block At:"+matrixIndexes.get(0));
+            return new MachineMoveChoice(true,matrixIndexes.get(0),false);
+        }
+        else if (tic == Constants.INDEX_UNOCCUPIED  && tac == Constants.COMPUTER && toe == Constants.COMPUTER){
+            Log.d(TAG,"Score Vertical Block:"+matrixIndexes.get(0));
+            MachineMoveChoice  record = new MachineMoveChoice(false,matrixIndexes.get(0),false);
+            record.setScore(true);
+            return record;
+        }
+        else if(tic == Constants.HUMAN  && tac == Constants.INDEX_UNOCCUPIED && toe == Constants.HUMAN)  {
+            Log.d(TAG,"Requires Vertical Block:"+matrixIndexes.get(1));
+            return new MachineMoveChoice(true,matrixIndexes.get(1),false);
+        }
+        else if(tic == Constants.COMPUTER  && tac == Constants.INDEX_UNOCCUPIED && toe == Constants.COMPUTER) {
+            Log.d(TAG,"Requires Vertical Score:"+matrixIndexes.get(1));
+            MachineMoveChoice record = new MachineMoveChoice(false,matrixIndexes.get(1),false);
+            record.setScore(true);
+            return record;
+        }
+        else if (tic == Constants.HUMAN  && tac == Constants.HUMAN && toe == Constants.INDEX_UNOCCUPIED){
+            Log.d(TAG,"Requires Vertical Block:"+matrixIndexes.get(2));
+            return  new MachineMoveChoice(true,matrixIndexes.get(2),false);
+        }
+        else if (tic == Constants.COMPUTER  && tac == Constants.COMPUTER && toe == Constants.INDEX_UNOCCUPIED) {
+            Log.d(TAG, "Requires Vertical Score:" + matrixIndexes.get(2));
+            MachineMoveChoice record = new MachineMoveChoice(false,matrixIndexes.get(2),false);
+            record.setScore(true);
+            return record;
+        }
+
+        else if (tic == Constants.HUMAN && tac == Constants.INDEX_UNOCCUPIED && toe==Constants.INDEX_UNOCCUPIED) {
+            String random_key = chooseRandomInTwoNumbers(new ArrayList<String>(Arrays.asList(matrixIndexes.get(1),matrixIndexes.get(2))));
+            Log.d(TAG,"Doesn't Require Vertical Block:"+random_key);
+            return new MachineMoveChoice(false,random_key,false);
+
+        }
+        else if (tic == Constants.INDEX_UNOCCUPIED && tac==Constants.HUMAN && toe==Constants.INDEX_UNOCCUPIED){
+            String random_key = chooseRandomInTwoNumbers(new ArrayList<String>(Arrays.asList(matrixIndexes.get(0),matrixIndexes.get(2))));
+            Log.d(TAG,"Doesn't Require Vertical Block:"+random_key);
+            return new MachineMoveChoice(false,random_key,false);
+
+        }
+        else if (tic == Constants.INDEX_UNOCCUPIED && tac==Constants.INDEX_UNOCCUPIED && toe==Constants.HUMAN){
+            String random_key = chooseRandomInTwoNumbers(new ArrayList<String>(Arrays.asList(matrixIndexes.get(0),matrixIndexes.get(1))));
+            Log.d(TAG,"Doesn't Require Vertical Block:"+random_key);
+            return new MachineMoveChoice(false,random_key,false);
+
+        }
+        else {
+            Log.d(TAG,"Getting Occupiable position from matrixIndexes:"+matrixIndexes);
+            return getMachineOccupiablePosition(matrixIndexes);
+        }
+    }
+
+    private MachineMoveChoice getMachineOccupiablePosition(List<String> matrixIndexes) {
+        // set the field isNull to false;
+        MachineMoveChoice machine_move = new MachineMoveChoice(true);
+        List<String> unoccupied_indexes = new ArrayList<String>();
+        for (String key:matrixIndexes) {
+            int row = Integer.parseInt(String.valueOf(key.charAt(0)));
+            int column = Integer.parseInt(String.valueOf(key.charAt(1)));
+            if (game_board[row][column]==Constants.INDEX_UNOCCUPIED){
+               // machine_move =  new MachineMoveChoice(false,key,false);
+                unoccupied_indexes.add(key);
+            }
+
+        }
+        if (unoccupied_indexes.size()>0){
+            Collections.shuffle(unoccupied_indexes);
+            String shuffled_unoccupied_key = unoccupied_indexes.get(0);
+            machine_move.setBoardKey(shuffled_unoccupied_key);
+            machine_move.setScore(false);
+            machine_move.setNull(false);
+            machine_move.setRedAlert(false);
+
+        }
+
+        return machine_move;
+    }
+
+    private String chooseRandomInTwoNumbers(ArrayList<String> integers) {
+        Collections.shuffle(integers);
+        return integers.get(0);
     }
 
     private void setHorizontalMap() {
@@ -269,6 +553,7 @@ public class TicTacToe  {
         Log.d(TAG,"Diagonal Map");
 
     }
+
 
 
 }
