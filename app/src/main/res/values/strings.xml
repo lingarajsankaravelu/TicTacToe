@@ -8,7 +8,7 @@
     <string name="heading_tie">Tie</string>
     <string name="heading_machine">Machine</string>
     <string name="generate_machine_move_error">Unable to Generate the next move for Computer</string>
-    <string name="tie_toast">\"Current Game ended in a tie</string>
+    <string name="tie_toast">Current Game ended in a tie</string>
     <string name="player_lost">You lost the game</string>
     <string name="player_won">You won the game</string>
 </resources>
